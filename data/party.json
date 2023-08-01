@@ -1,0 +1,13 @@
+{
+	"name": "Gaulius Stormbringer",
+	"hp_max": 50,
+	"ac": 17,
+	"initiative": 3,
+	"strength": 16,
+	"dexterity": 16,
+	"constitution": 16,
+	"intelligence": 8,
+	"wisdom": 12,
+	"charisma": 12,
+	"path_to_img": "../data/Barbarian_diablo_II.gif"
+}

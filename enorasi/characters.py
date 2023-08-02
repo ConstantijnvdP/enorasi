@@ -1,3 +1,4 @@
+import random
 import json
 from dataclasses import dataclass
 import PySimpleGUI as sg
@@ -5,11 +6,20 @@ import PySimpleGUI as sg
 enorasi_gk = u"\u03B5\u03BD\u03CC\u03C1\u03B1\u03C3\u03B7" ## ενόραση
 
 ## Utility functions
-def load_character(file_path):
+def load_party_panes(file_path):
     with open(file_path, "r") as f:
-        char_data = json.load(f)
+        party_data = json.load(f)
 
-    return Character(**char_data)
+    return [CharacterPane(Character(**char_dict)) for char_dict in party_data]
+
+def roll_initiative(character_list):
+    queue = []
+    for char in character_list:
+        roll = random.randint(1, 20)
+        init = roll + char.initiative
+        queue.append((char.name, init, roll))
+
+    return queue
 
 
 @dataclass
@@ -18,6 +28,7 @@ class Character:
     hp_max: int
     ac: int
     initiative: int
+    perception: int
     strength: int
     dexterity: int
     constitution: int
@@ -31,37 +42,34 @@ class Character:
 
 
 class CharacterPane:
-    def __init__(self, char_path):
-        self.char = load_character(char_path)
+    def __init__(self, character: Character):
+        self.char = character
         self.hp_current = self.char.hp_max
+        self.status = "Healthy"
 
 
     def get_layout(self):
         return [
             [sg.Text(self.char.name)],
             [
+                sg.Image(self.char.path_to_img, key=f"{self.char.name}-PROFILE", size=(50,50)),
                 sg.Text(f"HP  {self.hp_current}/{self.char.hp_max}", key=f"{self.char.name}-HP"),
                 sg.ProgressBar(self.char.hp_max, orientation='h', size=(20,20), key=f"{self.char.name}-HPBar"),
-                sg.Input(key=f"{self.char.name}-DMG", enable_events=True)
+                sg.Input(key=f"{self.char.name}-DMG", enable_events=True, size=(8,20))
             ],
-            [sg.Image(self.char.path_to_img, key=f"{self.char.name}-PROFILE")]
         ]
 
     
     def set_window(self, window):
         self._window = window
-
+        window[f"{self.char.name}-HPBar"].UpdateBar(self.hp_current)
 
     def update_hp(self, damage):
-        assert type(damage) is int, "Can only update HP with int!"
-        self.hp_current += damage
-        
-        if self.hp_current > self.char.hp_max:
-            self.hp_current = self.char.hp_max
-
-        if self.hp_current < 0:
-            self.hp_current = 0
-
+        try:
+            ## Update current HP, but restrict to range [0, Max HP]
+            self.hp_current = max(min(self.char.hp_max, self.hp_current + int(damage)), 0)
+        except Exception:
+            return ## If damage can't be converted to an int, do nothing
         self._window[f"{self.char.name}-HPBar"].UpdateBar(self.hp_current)
         self._window[f"{self.char.name}-HP"].update(f"HP  {self.hp_current}/{self.char.hp_max}")
 

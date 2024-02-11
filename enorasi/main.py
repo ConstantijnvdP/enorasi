@@ -13,7 +13,18 @@ def get_character_panes(party_json_path):
 def get_party_layout(char_pane_list):
     layout = [[char.get_layout()] for char in char_pane_list]
     layout += [[sg.Button("Damage")]]
+
     return layout
+
+def get_initiative_layout():
+    return [[sg.Listbox([0,1,2])], [sg.Button("Initiative")]]
+
+def get_layout(char_pane_list):
+    party_layout = get_party_layout(char_pane_list)
+    init_layout = get_initiative_layout()
+
+    return sg.Column(party_layout)#, [sg.VSeperator()]]#, init_layout]
+    #return party_layout
 
 
 def run_gui(pane_list, read_timeout=50):
@@ -36,10 +47,13 @@ def run_gui(pane_list, read_timeout=50):
             for pane in pane_list:
                 pane.update_hp(dmg[pane.char.name])
 
+        elif event == "Initiative":
+            print(characters.roll_initiative([pane.char for pane in pane_list]))
+
 
 if __name__ == "__main__":
     party_panes = get_character_panes("../data/party.json")[:2]
-    layout = get_party_layout(party_panes)
+    layout = get_layout(party_panes)
     window = sg.Window(title=enorasi_gk, layout=layout)
 
     _ = window.read()

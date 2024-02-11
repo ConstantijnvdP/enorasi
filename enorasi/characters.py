@@ -19,7 +19,10 @@ def roll_initiative(character_list):
         init = roll + char.initiative
         queue.append((char.name, init, roll))
 
-    return queue
+    random.shuffle(queue) ## Shuffle in case there are ties with initiative AND modifier
+    queue.sort(key=lambda x: (x[1], x[1]-x[2]), reverse=True)
+
+    return [f"{x[0]}    {x[2]}+{x[1]-x[2]}" for x in queue]
 
 
 @dataclass
@@ -49,14 +52,20 @@ class CharacterPane:
 
 
     def get_layout(self):
+        hp_row = [
+            sg.Text(f"HP  {self.hp_current}/{self.char.hp_max}", key=f"{self.char.name}-HP"),
+            sg.ProgressBar(self.char.hp_max, orientation='h', size=(20,20), key=f"{self.char.name}-HPBar"),
+            sg.Input(key=f"{self.char.name}-DMG", enable_events=True, size=(8,8))
+        ]
+
         return [
             [sg.Text(self.char.name)],
             [
                 sg.Image(self.char.path_to_img, key=f"{self.char.name}-PROFILE", size=(50,50)),
-                sg.Text(f"HP  {self.hp_current}/{self.char.hp_max}", key=f"{self.char.name}-HP"),
-                sg.ProgressBar(self.char.hp_max, orientation='h', size=(20,20), key=f"{self.char.name}-HPBar"),
-                sg.Input(key=f"{self.char.name}-DMG", enable_events=True, size=(8,20))
+                #sg.Column([hp_row, [sg.StatusBar(self.status, size=(8,8))]])
+                hp_row
             ],
+            #[sg.StatusBar(self.status, size=(8,2))]
         ]
 
     

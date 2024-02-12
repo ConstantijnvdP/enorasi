@@ -1,0 +1,26 @@
+<!-- index.html -->
+<html>
+<head>
+<title>Party Health</title>
+</head>
+<body>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for key, val in party_data.items() %}
+   <tr>
+       <td> {{ key }} </td>
+       <td> {{ val }} </td>
+   </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+</body>
+</html>

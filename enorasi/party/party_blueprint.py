@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 
-party_bp = Blueprint('party_blueprint', __name__)
+party_bp = Blueprint('party_blueprint', __name__,
+                    template_folder="templates")
 
 party_data = {
     "gaulius": {"hp": 55,
@@ -19,4 +20,4 @@ party_data = {
 
 @party_bp.route('/')
 def index():
-    return render_template("pages/index.html", party_data=party_data)
+    return render_template("party/party_hp.html", party_data=party_data)

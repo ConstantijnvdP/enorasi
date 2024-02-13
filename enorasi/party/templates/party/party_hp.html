@@ -1,25 +1,31 @@
-<!-- index.html -->
-<html>
-<head>
-<title>Party Health</title>
-</head>
-<body>
+<!-- party_hp.html -->
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Party</title>
+</head>
+
+<body>
+<h1>Party Health</h1>
 <table>
-  <thead>
-    <tr>
-      <th>Key</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for key, val in party_data.items() %}
-   <tr>
-       <td> {{ key }} </td>
-       <td> {{ val }} </td>
-   </tr>
-  {% endfor %}
-  </tbody>
+	<thead><tr>
+		<th>IMG</th>
+		<th>Name</th>
+		<th>HP</th>
+		<th>Status</th>
+	</tr></thead>
+	<tbody>
+		{% for name, data in party_data.items() %}
+		<tr>
+			<td> <img src={{ url_for('party_blueprint.static', filename=data["img"]) }} alt="genasi portrait" width="20%" height="auto"/> </td>
+			<td> {{ name }} </td>
+			<td> {{ data["hp"] }}/{{ data["max_hp"] }} </td>
+			<td> {{ data["status"] }} </td>
+		</tr>
+		{% endfor %}
+	</tbody>
 </table>
 
 </body>

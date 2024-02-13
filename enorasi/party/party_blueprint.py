@@ -1,20 +1,26 @@
+from pathlib import Path
 from flask import Blueprint, render_template
 
 party_bp = Blueprint('party_blueprint', __name__,
-                    template_folder="templates")
+                    template_folder="templates",
+                    static_folder='static',
+                    static_url_path='assets')
 
 party_data = {
-    "gaulius": {"hp": 55,
+    "Gaulius": {"hp": 55,
                 "max_hp": 75,
-                "status": "RAGE!"
+                "status": "RAGE!",
+                "img": "genasi.jpg"
                },
-    "kezneya": {"hp": 60,
+    "Kezneya": {"hp": 60,
                 "max_hp": 60,
-                "status": "Hidden"
+                "status": "Hidden",
+                "img": "genasi.jpg"
                },
     "Gilliam": {"hp": 8,
                 "max_hp": 72,
-                "status": "None"
+                "status": "None",
+                "img": "genasi.jpg"
                }
 }
 
